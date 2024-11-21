@@ -7,8 +7,8 @@
 
         public Response(bool success, string message)
         {
-            Success = success;
-            Message = message;
+            this.Success = success;
+            this.Message = message;
         }
     }
 

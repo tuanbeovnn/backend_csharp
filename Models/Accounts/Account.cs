@@ -26,5 +26,5 @@ public class Account : ModelBase
 public class RefreshToken
 {
     public string Token { get; set; }
-    public DateTime Expire { get; set; }
+    public DateTime ExpireDate { get; set; }
 }
