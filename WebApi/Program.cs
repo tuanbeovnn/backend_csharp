@@ -21,7 +21,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddJwtAuthentication(builder.Configuration)
     .AddCaching()
     .AddConfigureOptions()
-    .AddAutoMapper()
+    .AddMapperAndValidation()
+    .AddBlogDbContext(builder.Configuration)
     .AddServices();
 var app = builder.Build();
 

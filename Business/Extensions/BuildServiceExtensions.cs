@@ -1,27 +1,30 @@
-﻿using System.Text;
-using Application.EF;
+﻿using Application.EF;
 using Application.Uow;
 using AutoMapper;
 using Business.Services;
+using Business.Validation;
 using Dtos.Configure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Utilities;
 
 namespace Business.Extensions;
 
 public static class BuildServiceExtensions
 {
-    public static IServiceCollection AddAutoMapper(this IServiceCollection services)
+    public static IServiceCollection AddMapperAndValidation(this IServiceCollection services)
     {
         var mapperConfiguration = new MapperConfiguration(
             config => { config.AddProfile<MapProfile>(); });
 
         IMapper mapper = mapperConfiguration.CreateMapper();
         services.AddSingleton(mapper);
+
+        services.AddSingleton<IValidationFactory, ValidationFactory>();
         return services;
     }
 
@@ -48,16 +51,16 @@ public static class BuildServiceExtensions
             })
             .AddJwtBearer(options =>
             {
-                JwtOptions jwt = configuration.GetSection(JwtOptions.Name).Get<JwtOptions>();
+                JwtOptions? jwt = configuration.GetSection(JwtOptions.Name).Get<JwtOptions>();
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwt.Issuer,
-                    ValidAudience = jwt.Issuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(CryptoUtils.Decode(jwt.Key)))
+                    ValidIssuer = jwt?.Issuer,
+                    ValidAudience = jwt?.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(CryptoUtils.Decode(jwt?.Key)))
                 };
             });
         services.AddAuthorization();
@@ -65,13 +68,13 @@ public static class BuildServiceExtensions
     }
 
 
-    
-    
+
+
     public static IServiceCollection AddBlogDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContextPool<BlogDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-        services.AddScoped<UnitOfWork>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 

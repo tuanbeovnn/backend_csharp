@@ -1,5 +1,5 @@
 ﻿namespace Application.Extensions;
-internal static class QueryExtensions
+public static class QueryExtensions
 {
     public static void PagingQuery<T>(this IQueryable<T> query, int page, int pageSize)
     {

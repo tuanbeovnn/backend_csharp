@@ -8,6 +8,7 @@ public abstract class ModelBase
     public string? CreatedBy { get; set; }
     public string? ModifiedBy { get; set; }
     public DataStatus DataStatus { get; set; }
+    public int OwnerId { get; set; }
 }
 
 public enum DataStatus

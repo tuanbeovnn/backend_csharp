@@ -1,9 +1,11 @@
-﻿using Application.Repositories.Core;
+﻿using Application.Extensions;
+using Application.Repositories.Core;
 using Application.Uow;
 using Business.Validation;
 using Dtos.Core;
 using Dtos.Responses;
 using Dtos.Tags;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace Business.Services;
@@ -12,8 +14,22 @@ public class TagService(IUnitOfWork uow, IValidationFactory validation) : Servic
 {
     public async Task<PagedResult<Tag>> SearchTag(SearchArgs args)
     {
-        await Task.Delay(1);
-        return new PagedResult<Tag>();
+        var query = uow.Tags.Query;
+        if (args.OwnerId > 0)
+        {
+            query = query.Where(f => f.OwnerId == args.OwnerId);
+        }
+
+        long total = await query.CountAsync();
+        query.PagingQuery(args.Page, args.Size);
+        var items = await query.ToListAsync();
+        return new PagedResult<Tag>()
+        {
+            Page = args.Page,
+            PageSize = args.Size,
+            Total = total,
+            Items = items
+        };
     }
 
     public async Task<Response<long>> UpsertTag(UpsertTag args)
