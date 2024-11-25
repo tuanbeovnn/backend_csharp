@@ -26,7 +26,7 @@ namespace Business.Filters
             {
                 return;
             }
-
+            
             var userClaims = GetUserClaims(context.HttpContext.User);
             if (!userClaims.IsValid())
             {

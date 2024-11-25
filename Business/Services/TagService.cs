@@ -47,6 +47,7 @@ public class TagService(IUnitOfWork uow, IValidationFactory validation) : Servic
 
     public async Task<Response<long>> Delete(BaseArgs args)
     {
+        
         var tag = uow.Tags.GetById(args.Id);
         if (tag == null) return new ErrorResponse<long>();
         uow.Tags.Update(tag, f => f.DataStatus, DataStatus.Deleted);
