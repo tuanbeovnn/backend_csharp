@@ -21,14 +21,19 @@ namespace Application.EF
         public virtual DbSet<Tag> Tags { get; set; }
 
 
-        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // {
-        //     if (!optionsBuilder.IsConfigured)
-        //     {
-        //         optionsBuilder.UseSqlServer("Server=VUVIETTUNG\\MSSQLSERVER01;Database=BLOG;Trusted_Connection=True",
-        //             options => { options.EnableRetryOnFailure(); });
-        //     }
-        // }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var connectionString = "Server=code4fun.xyz,1433;Database=blogs_solution;User Id=sa;Password=P@ssword*123;";
+        
+                optionsBuilder.UseSqlServer(connectionString, options => 
+                {
+                    options.EnableRetryOnFailure();
+                });
+            }
+        }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
